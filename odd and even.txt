@@ -1,0 +1,36 @@
+#include<stdio.h>
+void oddeven(int arr[],int n)
+{
+	printf("even numbers:\n");
+	for(int i=0;i<n;i++)
+	{
+		if(arr[i]%2==0)
+		{
+			printf("%d\n",arr[i]);
+		}
+	}
+	printf("odd numbers:\n");
+	for(int i=0;i<n;i++)
+	{
+		if(arr[i]%2!=0)
+		{
+			printf("%d\n",arr[i]);
+		}
+	}
+	printf("\n");
+}
+
+int main()
+{
+	int arr[100];
+	int n;
+	printf("enter the numbers of elements:");
+	scanf("%d",&n);
+	printf("enter the elements:\n");
+	for(int i=0;i<n;i++)
+	{
+		scanf("%d",&arr[i]);
+	}
+	oddeven(arr,n);
+	return 0;
+}

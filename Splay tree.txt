@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int key;
+    struct Node *left, *right;
+};
+
+struct Node* newNode(int key) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->key = key;
+    node->left = node->right = NULL;
+    return node;
+}
+
+void rightRotate(struct Node** root) {
+    struct Node* leftChild = (*root)->left;
+    (*root)->left = leftChild->right;
+    leftChild->right = *root;
+    *root = leftChild;
+}
+
+void leftRotate(struct Node** root) {
+    struct Node* rightChild = (*root)->right;
+    (*root)->right = rightChild->left;
+    rightChild->left = *root;
+    *root = rightChild;
+}
+
+void splay(struct Node** root, int key) {
+    if (*root == NULL || (*root)->key == key) return;
+
+    if ((*root)->key > key) {
+        if ((*root)->left == NULL) return;
+
+        if ((*root)->left->key > key) {
+            splay(&((*root)->left->left), key);
+            rightRotate(root);
+        } else if ((*root)->left->key < key) {
+            splay(&((*root)->left->right), key);
+            if ((*root)->left->right != NULL)
+                leftRotate(&((*root)->left));
+        }
+        rightRotate(root);
+    } else {
+        if ((*root)->right == NULL) return;
+
+        if ((*root)->right->key > key) {
+            splay(&((*root)->right->left), key);
+            if ((*root)->right->left != NULL)
+                rightRotate(&((*root)->right));
+        } else if ((*root)->right->key < key) {
+            splay(&((*root)->right->right), key);
+        }
+        leftRotate(root);
+    }
+}
+
+struct Node* insert(struct Node* root, int key) {
+    if (root == NULL) return newNode(key);
+    splay(&root, key);
+    if (root->key == key) return root;
+
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->key = key;
+
+    if (root->key > key) {
+        newNode->right = root;
+        newNode->left = root->left;
+        root->left = NULL;
+    } else {
+        newNode->left = root;
+        newNode->right = root->right;
+        root->right = NULL;
+    }
+    return newNode;
+}
+
+void preOrder(struct Node* root) {
+    if (root != NULL) {
+        printf("%d ", root->key);
+        preOrder(root->left);
+        preOrder(root->right);
+    }
+}
+
+int main() {
+    struct Node* root = NULL;
+    root = insert(root, 10);
+    root = insert(root, 20);
+    root = insert(root, 30);
+    root = insert(root, 40);
+    root = insert(root, 50);
+
+    printf("Preorder traversal of the modified Splay tree is: ");
+    preOrder(root);
+    return 0;
+}
